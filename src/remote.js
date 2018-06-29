@@ -78,6 +78,9 @@
     exports.readRemoteImagesFromContent = async function (content, article) {
         const dom = new JSDOM(content);
 
+        // add a utf8 header
+        dom.window.document.head.insertAdjacentHTML('beforeend', '<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>');
+
         // download images
         let imgs = dom.window.document.querySelectorAll('img');
         if (imgs.length !== 0) {
