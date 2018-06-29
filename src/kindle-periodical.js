@@ -77,11 +77,15 @@
         return content;
     }
 
-    function createMobiFile (filename) {
+    function createMobiFile (filename, opts) {
+        const compression = ['-c0', '-c1', '-c2'][(opts && opts.compression) || 0]
+        // -c0: no compression
+        // -c1: standard DOC compression
+        // -c2: Kindle huffdic compression
         return new Promise((resolve, reject) => {
             let commands = [
                 'cd ' + path.normalize(bookFolderPath),
-                `${path.resolve(__dirname, '..', 'bin/kindlegen')} -c2 contents.opf -o ${filename}.mobi`
+                `${path.resolve(__dirname, '..', 'bin/kindlegen')} ${compression} -locale zh contents.opf -o ${filename}.mobi`
             ];
 
             let kindlegenExec = exec(commands.join(' && '));
@@ -317,7 +321,7 @@
             await createNsxHTMLFile(params);
 
             let filename = opts.filename || params.title.replace(' ', '');
-            await createMobiFile(filename);
+            await createMobiFile(filename, opts);
             await copyCreatedMobi(filename, opts.targetFolder);
 
             return true;
